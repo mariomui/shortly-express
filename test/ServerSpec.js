@@ -64,7 +64,6 @@ describe('', function() {
   describe('Database Schema:', function() {
     it('contains a users table', function(done) {
       var queryString = 'SELECT * FROM users';
-        console.log('hello');
       db.query(queryString, function(err, results) {
         if (err) { return done(err); }
 
@@ -208,7 +207,7 @@ describe('', function() {
       });
     });
   });
-//x
+
   describe('Account Login:', function() {
 
     beforeEach(function(done) {

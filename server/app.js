@@ -100,21 +100,48 @@ app.post('/links',
 app.get('/signup', (req,res, next) => {
   res.render('signup');
 });
+
 app.post('/signup', (req, res, next) => {
   var options = {
     username: req.body.username,
     password: req.body.password,
   };
 
-  return models.Users.create(options)
+  return models.Users.get({username: options.username})
     .then( (result) => {
-      res.sendStatus(201);
+      if (result === undefined) {
+        return models.Users.create(options);
+      } else {
+        throw ('No user in db');
+      }
     })
-    .error(error => {
-      res.status(500).send(error);
+    .then(() => {
+      res.redirect('/');
     })
     .catch(() => {
+      res.redirect('/signup');
+    });
+});
+
+app.post('/login', (req, res, next) => {
+  var options = {
+    username: req.body.username,
+    password: req.body.password,
+  };
+
+  return models.Users.get(options)
+    .then( (result) => {
+      if (result === undefined) {
+        return models.Users.create(options);
+      } else {
+        throw ('No user in db');
+      }
+    })
+    .then(() => {
       res.redirect('/');
+    })
+    .catch(() => {
+      res.redirect('/signup');
     });
 });
 
