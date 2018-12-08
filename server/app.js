@@ -129,19 +129,19 @@ app.post('/login', (req, res, next) => {
     password: req.body.password,
   };
 
-  return models.Users.get(options)
+  return models.Users.get({username: options.username})
     .then( (result) => {
-      if (result === undefined) {
-        return models.Users.create(options);
+      if (!result) {
+        return res.redirect('/login');
       } else {
-        throw ('No user in db');
+        var flag = models.Users.compare(options.password, result.password, result.salt);
+        if (flag) {
+          return res.redirect('/');
+        } else {
+          return res.redirect('/login');
+        }
+        res.sendStatus(201);
       }
-    })
-    .then(() => {
-      res.redirect('/');
-    })
-    .catch(() => {
-      res.redirect('/signup');
     });
 });
 
