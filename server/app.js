@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
 
+// const user = require('./models/user');
+
 const app = express();
 
 app.set('views', `${__dirname}/views`);
@@ -15,7 +17,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
-
+app.get('/login', (req, res) => {
+  res.render('login');
+}) 
 
 app.get('/', 
 (req, res) => {
@@ -85,6 +89,34 @@ app.post('/links',
 // assume the route is a short code and try and handle it here.
 // If the short-code doesn't exist, send the user to '/'
 /************************************************************/
+// app.post('/login', (req, res, next) => {
+//   // console.log(req,'heheheh');
+//   var {username, password} = req.body;
+//   console.log(username, password, 'dkdjfkjdf');
+//   res.render('index');
+// });
+
+
+app.get('/signup', (req,res, next) => {
+  res.render('signup');
+});
+app.post('/signup', (req, res, next) => {
+  var options = {
+    username: req.body.username,
+    password: req.body.password,
+  };
+
+  return models.Users.create(options)
+    .then( (result) => {
+      res.sendStatus(201);
+    })
+    .error(error => {
+      res.status(500).send(error);
+    })
+    .catch(() => {
+      res.redirect('/');
+    });
+});
 
 app.get('/:code', (req, res, next) => {
 
